@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajer Tugas Harian</title>
+    <style>
+        /* Mengatur font dan gaya dasar */
+        :root {
+            --primary-blue: #1864f8;
+            --bg-color: #f6f8fc;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #888888;
+            --border-color: #e2e8f0;
+            
+            --high-color: #ef4444;
+            --high-bg: #fee2e2;
+            --medium-color: #eab308;
+            --medium-bg: #fef9c3;
+            --medium-border: #ca8a04;
+            --low-color: #22c55e;
+            
+            --btn-hover: #f1f5f9;
+            --danger-bg: #ffe4e6;
+            --danger-text: #e11d48;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* HEADER SECTION */
+        .header {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 24px 32px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .header-title-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .icon-container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 24px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #d1e0ff;
+            margin-top: 4px;
+        }
+
+        .progress-section {
+            margin-top: 10px;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: white;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 24px 32px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        /* FORM TAMBAH TUGAS */
+        .input-task {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 15px;
+            margin-bottom: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-task:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .priority-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .priority-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .priority-btn {
+            flex: 1;
+            padding: 12px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .priority-btn.active.sedang {
+            background-color: var(--medium-bg);
+            border-color: var(--medium-border);
+            color: var(--medium-border);
+            box-shadow: 0 2px 8px rgba(234, 179, 8, 0.2);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot.tinggi { background-color: var(--high-color); }
+        .dot.sedang { background-color: var(--medium-color); }
+        .dot.rendah { background-color: var(--low-color); }
+
+        .btn-add {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-add:hover { background-color: #1555d4; }
+
+        /* DAFTAR TUGAS */
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .sort-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .task-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0.6; /* Style untuk task yang selesai */
+        }
+
+        .task-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20px;
+            bottom: 20px;
+            width: 4px;
+            background-color: var(--high-color);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .task-title {
+            font-size: 16px;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-weight: 500;
+            margin-bottom: 12px;
+            margin-left: 12px;
+        }
+
+        .task-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            margin-left: 12px;
+        }
+
+        .tag {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-tinggi { background-color: var(--high-bg); color: var(--high-color); }
+        .tag-selesai { background-color: #f1f5f9; color: var(--text-muted); }
+
+        .task-actions {
+            display: flex;
+            gap: 12px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            margin-left: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: #f8fafc;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover { background-color: var(--border-color); }
+        
+        .action-btn.hapus {
+            background-color: var(--danger-bg);
+            color: var(--danger-text);
+        }
+        .action-btn.hapus:hover { background-color: #fda4af; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header class="header">
+        <div class="header-title-container">
+            <div class="icon-container">📋</div>
+            <div>
+                <h1>Manajer Tugas Harian</h1>
+                <p id="task-status-text">1 dari 1 tugas selesai</p>
+            </div>
+        </div>
+        <div class="progress-section">
+            <div class="progress-labels">
+                <span>Progres</span>
+                <span id="progress-percentage">100%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 100%;"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+        <section class="card">
+            <h2 class="section-title">TAMBAH TUGAS BARU</h2>
+            <input type="text" id="task-input" class="input-task" placeholder="Masukkan nama tugas...">
+            
+            <span class="priority-label">Tingkat Prioritas:</span>
+            <div class="priority-options">
+                <button class="priority-btn" onclick="selectPriority(this)">
+                    <span class="dot tinggi"></span> Tinggi
+                </button>
+                <button class="priority-btn active sedang" onclick="selectPriority(this)">
+                    <span class="dot sedang"></span> Sedang
+                </button>
+                <button class="priority-btn" onclick="selectPriority(this)">
+                    <span class="dot rendah"></span> Rendah
+                </button>
+            </div>
+
+            <button class="btn-add" onclick="addTask()">+ Tambah Tugas</button>
+        </section>
+
+        <div class="list-header">
+            <h2 class="section-title" style="margin-bottom: 0;">DAFTAR TUGAS</h2>
+            <span class="sort-text">Diurutkan: Tinggi &rarr; Sedang &rarr; Rendah</span>
+        </div>
+
+        <div id="task-list">
+            <div class="task-item">
+                <div class="task-title">Menyelesaikan tugas Pemrograman Dasar</div>
+                <div class="task-tags">
+                    <span class="tag tag-tinggi"><span class="dot tinggi"></span> Tinggi</span>
+                    <span class="tag tag-selesai">✓ Selesai</span>
+                </div>
+                <div class="task-actions">
+                    <button class="action-btn">↩️ Belum</button>
+                    <button class="action-btn">✏️ Edit</button>
+                    <button class="action-btn hapus">🗑️ Hapus</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    // Fungsi untuk mengubah status tombol prioritas yang aktif
+    function selectPriority(clickedButton) {
+        // Hapus class 'active' dan 'sedang' dari semua tombol
+        const buttons = document.querySelectorAll('.priority-btn');
+        buttons.forEach(btn => {
+            btn.classList.remove('active', 'sedang');
+        });
+
+        // Tambahkan class ke tombol yang diklik
+        clickedButton.classList.add('active');
+        
+        // Pengecekan khusus untuk styling tombol "Sedang" yang berwarna kuning/oranye
+        if (clickedButton.innerText.includes('Sedang')) {
+            clickedButton.classList.add('sedang');
+        }
+    }
+
+    // Fungsi placeholder untuk menambahkan tugas (hanya alert untuk demonstrasi)
+    function addTask() {
+        const input = document.getElementById('task-input').value;
+        if(input.trim() === '') {
+            alert('Silakan masukkan nama tugas terlebih dahulu.');
+            return;
+        }
+        alert('Fitur tambah tugas berjalan! (Ini adalah demo statis)');
+        document.getElementById('task-input').value = ''; // Kosongkan input
+    }
+</script>
+
+</body>
+</html>
